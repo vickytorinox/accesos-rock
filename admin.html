@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spartan Rock — Panel de Administración</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --bg: #f7f8f5;
+    --surface: #ffffff;
+    --border: #e2e8e0;
+    --green: #1a7a3c;
+    --green-light: #e8f5ee;
+    --green-mid: #2ecc71;
+    --text: #111a14;
+    --muted: #6b7c70;
+    --danger: #dc2626;
+    --danger-light: #fef2f2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* HEADER */
+  .header {
+    background: #0f1f16;
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--green);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 4px;
+    color: var(--green-mid);
+  }
+  .header-tag {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #4a7a5c;
+    border-left: 1px solid #2a4a32;
+    padding-left: 16px;
+  }
+  .base-url-display {
+    font-size: 12px;
+    color: #4a7a5c;
+    font-family: monospace;
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 0;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* ADD OBJETIVO FORM */
+  .add-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .form-field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 160px; }
+  .form-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  input[type="text"] {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="text"]:focus { border-color: var(--green); }
+
+  .btn {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.5; cursor: default; }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #155c2d; }
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .btn-outline:hover { border-color: var(--green); color: var(--green); }
+  .btn-danger {
+    background: transparent;
+    border: none;
+    color: #ccc;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .btn-danger:hover { color: var(--danger); }
+
+  /* OBJETIVOS LIST */
+  .objetivo-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .objetivo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--green-light);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .objetivo-header:hover { background: #d8f0e4; }
+  .objetivo-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    color: var(--green);
+  }
+  .objetivo-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .puesto-count {
+    font-size: 12px;
+    color: var(--muted);
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+  .chevron {
+    font-size: 12px;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+  .chevron.open { transform: rotate(180deg); }
+
+  .objetivo-body {
+    padding: 16px 20px;
+    display: none;
+  }
+  .objetivo-body.open { display: block; }
+
+  /* PUESTOS */
+  .puestos-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .puesto-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    gap: 12px;
+  }
+  .puesto-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+  .puesto-name { font-weight: 600; font-size: 14px; }
+  .puesto-url {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .puesto-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  .add-puesto-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .add-puesto-form input { flex: 1; }
+
+  /* COPY TOAST */
+  .copy-btn {
+    background: #0f1f16;
+    color: var(--green-mid);
+    border: none;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .copy-btn:hover { background: #1a3a24; }
+  .copy-btn.copied { background: var(--green); color: white; }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-text { font-size: 15px; }
+  .loading-msg { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 14px; }
+
+  /* BASE URL CONFIG */
+  .config-bar {
+    background: #0f1f16;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .config-bar label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #4a7a5c; white-space: nowrap; }
+  .config-bar input {
+    flex: 1;
+    min-width: 200px;
+    background: #1a3a24;
+    border: 1px solid #2a5a34;
+    color: #a0d4b0;
+    font-family: monospace;
+    font-size: 13px;
+  }
+  .config-bar input:focus { border-color: var(--green-mid); }
+
+  /* VERSION TOGGLE */
+  .version-toggle {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .version-toggle button {
+    padding: 8px 14px;
+    border: none;
+    background: var(--bg);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .version-toggle button + button { border-left: 1px solid var(--border); }
+  .version-toggle button.active-basica   { background: #e8f5ee; color: var(--green); }
+  .version-toggle button.active-extended { background: #fff8e1; color: #78350f; }
+
+  /* BADGES */
+  .badge-basica {
+    display: inline-block;
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+    background: #e8f5ee; color: var(--green); border: 1px solid #b8e0c8;
+    margin-left: 6px; vertical-align: middle;
+  }
+  .badge-extended {
+    display: inline-block;
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+    background: #fff8e1; color: #78350f; border: 1px solid #f59e0b;
+    margin-left: 6px; vertical-align: middle;
+  }
+
+  /* ─── FLOTA DE DISPOSITIVOS ─── */
+  .fleet-bar { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .btn-delete {
+    background: transparent;
+    border: 1px solid #e0a0a0;
+    color: #c0152f;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .btn-delete:hover { background: #fef2f2; border-color: #c0152f; }
+  .add-device-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .device-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .device-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .device-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .device-alias {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; letter-spacing: 2px; color: var(--text);
+  }
+  .device-assign { font-size: 13px; color: var(--text); font-weight: 500; }
+  .device-conex { font-size: 11px; color: var(--muted); }
+  .device-conex.stale { color: var(--danger); }
+  .device-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+  .device-editor {
+    display: none;
+    padding: 16px 20px 20px;
+    flex-direction: column;
+    gap: 12px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .device-editor.open { display: flex; }
+  .device-editor input[type="text"] { background: var(--surface); }
+  .editor-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+
+  /* ─── USUARIOS DEL PORTAL ─── */
+  .badge-activo {
+    display: inline-block;
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+    background: #e8f5ee; color: var(--green); border: 1px solid #b8e0c8;
+    margin-left: 6px; vertical-align: middle;
+  }
+  .badge-inactivo {
+    display: inline-block;
+    font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700;
+    padding: 2px 7px; border-radius: 20px;
+    background: #fef2f2; color: var(--danger); border: 1px solid #e0a0a0;
+    margin-left: 6px; vertical-align: middle;
+  }
+  input[type="password"].campo-pass {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="password"].campo-pass:focus { border-color: var(--green); }
+  .device-editor input[type="password"].campo-pass { background: var(--surface); }
+  .hint { font-size: 11px; color: var(--muted); }
+
+  /* ─── SELECTOR DE OBJETIVOS (chips + modal) ─── */
+  .chips-box {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; background: var(--bg); min-height: 44px;
+  }
+  .device-editor .chips-box { background: var(--surface); }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-light); color: var(--green);
+    border: 1px solid #b8e0c8; border-radius: 20px;
+    padding: 4px 10px; font-size: 12px; font-weight: 600;
+  }
+  .chip button {
+    background: none; border: none; color: var(--green);
+    font-size: 13px; cursor: pointer; padding: 0; line-height: 1;
+  }
+  .chip button:hover { color: var(--danger); }
+  .chips-vacio { font-size: 12px; color: var(--muted); }
+  .btn-add-obj {
+    background: white; border: 1px dashed var(--green); color: var(--green);
+    border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer;
+  }
+  .btn-add-obj:hover { background: var(--green-light); }
+
+  .picker-backdrop {
+    position: fixed; inset: 0; background: rgba(15,31,22,0.55);
+    display: none; align-items: center; justify-content: center;
+    z-index: 800; padding: 20px;
+  }
+  .picker-backdrop.open { display: flex; }
+  .picker {
+    background: white; border-radius: 14px; width: 100%; max-width: 440px;
+    max-height: 80vh; display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.4);
+  }
+  .picker-head {
+    padding: 16px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .picker-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 17px;
+    letter-spacing: 2px; color: var(--green);
+  }
+  .picker-close {
+    background: var(--bg); border: 1px solid var(--border); color: var(--muted);
+    width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 14px;
+  }
+  .picker-search { padding: 12px 20px 4px; }
+  .picker-search input { width: 100%; }
+  .picker-lista { overflow-y: auto; flex: 1; padding: 8px 12px 12px; }
+  .picker-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 10px; border-radius: 8px; cursor: pointer;
+    font-size: 14px; font-weight: 500; user-select: none;
+  }
+  .picker-item:hover { background: var(--bg); }
+  .picker-item.marcado { background: var(--green-light); color: var(--green); }
+  .picker-check {
+    width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 5px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; color: white; flex-shrink: 0;
+  }
+  .picker-item.marcado .picker-check { background: var(--green); border-color: var(--green); }
+  .picker-vacio { text-align: center; color: var(--muted); font-size: 13px; padding: 24px 10px; }
+  .picker-foot {
+    padding: 12px 20px; border-top: 1px solid var(--border);
+    display: flex; gap: 10px; justify-content: flex-end;
+  }
+</style>
+</head>
+<body>
+
+<!-- PANTALLA DE LOGIN -->
+<div id="loginScreen" style="position:fixed; inset:0; background:#0f1f16; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; gap:24px;">
+  <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; letter-spacing:6px; color:#2ecc71;">SPARTAN</div>
+  <div style="font-size:12px; letter-spacing:3px; color:#4a7a5c; text-transform:uppercase;">Rock · Panel de Administración</div>
+  <div style="display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px;">
+    <input type="password" id="passwordInput" placeholder="Contraseña" onkeydown="if(event.key==='Enter') verificarPassword()"
+      style="padding:14px 16px; background:#1a3a24; border:1px solid #2a5a34; border-radius:8px; color:#a0d4b0; font-family:'DM Sans',sans-serif; font-size:16px; outline:none; text-align:center; letter-spacing:4px;">
+    <div id="loginError" style="color:#e63030; font-size:13px; text-align:center; display:none;">Contraseña incorrecta</div>
+    <button onclick="verificarPassword()"
+      style="padding:14px; background:#1db954; color:white; border:none; border-radius:8px; font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:3px; cursor:pointer;">
+      INGRESAR
+    </button>
+  </div>
+</div>
+
+<div id="adminContent" style="display:none;">
+<div class="header">
+  <div class="header-left">
+    <div class="logo">SPARTAN</div>
+    <div class="header-tag">Rock · Panel de Administración</div>
+  </div>
+  <button onclick="cerrarAdmin()" style="background:transparent; border:1px solid #2a5a34; color:#4a7a5c; padding:6px 14px; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer;">Cerrar sesión</button>
+</div>
+
+<div class="main">
+
+  <!-- FLOTA DE DISPOSITIVOS -->
+  <div class="section-title">Flota de dispositivos</div>
+  <div class="fleet-bar">
+    <button class="btn btn-outline" onclick="cargarDispositivos()">↻ Actualizar</button>
+    <button class="btn btn-green" onclick="toggleAddDevice()">+ AGREGAR DISPOSITIVO</button>
+  </div>
+
+  <div id="addDeviceForm" class="add-device-form" style="display:none;">
+    <div class="form-field">
+      <div class="form-label">Alias</div>
+      <input type="text" id="newDevAlias" placeholder="Ej: TABLET-05">
+    </div>
+    <div class="form-field">
+      <div class="form-label">Objetivo</div>
+      <input type="text" id="newDevObj" placeholder="Ej: Estadio Norte" list="objetivosDatalist">
+    </div>
+    <div class="form-field">
+      <div class="form-label">Puesto</div>
+      <input type="text" id="newDevPst" placeholder="Ej: 1">
+    </div>
+    <button class="btn btn-green" onclick="agregarDispositivo(this)">+ GUARDAR</button>
+  </div>
+
+  <div id="dispositivosList"></div>
+
+  <!-- VIGILADORES -->
+  <div class="section-title" style="margin-top:48px;">Vigiladores</div>
+  <div class="fleet-bar">
+    <button class="btn btn-outline" onclick="cargarVigiladores()">↻ Actualizar</button>
+    <button class="btn btn-green" onclick="toggleAddVigi()">+ AGREGAR VIGILADOR</button>
+  </div>
+
+  <div id="addVigiForm" class="add-device-form" style="display:none;">
+    <div class="form-field">
+      <div class="form-label">CUIL</div>
+      <input type="text" id="newVigiCuil" placeholder="Solo números" inputmode="numeric"
+        onkeydown="if(event.key==='Enter') document.getElementById('newVigiNombre').focus()">
+    </div>
+    <div class="form-field" style="flex:1.5;">
+      <div class="form-label">Apellido y nombre</div>
+      <input type="text" id="newVigiNombre" placeholder="Ej: García Juan"
+        onkeydown="if(event.key==='Enter') agregarVigilador()">
+    </div>
+    <button class="btn btn-green" onclick="agregarVigilador(this)">+ GUARDAR</button>
+  </div>
+
+  <div id="vigiladoresList"></div>
+
+  <!-- USUARIOS DEL PORTAL DE CLIENTES -->
+  <div class="section-title" style="margin-top:48px;">Usuarios del portal de clientes</div>
+  <div class="fleet-bar">
+    <button class="btn btn-outline" onclick="cargarUsuariosPortal()">↻ Actualizar</button>
+    <button class="btn btn-green" onclick="toggleAddUser()">+ AGREGAR USUARIO</button>
+  </div>
+
+  <div id="addUserForm" class="add-device-form" style="display:none;">
+    <div class="form-field">
+      <div class="form-label">Usuario</div>
+      <input type="text" id="newUserNombre" placeholder="Ej: rocklog" autocapitalize="none">
+    </div>
+    <div class="form-field">
+      <div class="form-label">Contraseña</div>
+      <input type="password" class="campo-pass" id="newUserPass" placeholder="Mín. 8 caracteres" autocomplete="new-password">
+    </div>
+    <div class="form-field" style="flex:1.5;">
+      <div class="form-label">Objetivos permitidos</div>
+      <div class="chips-box" id="chips_nuevo"></div>
+    </div>
+    <button class="btn btn-green" onclick="agregarUsuarioPortal(this)">+ GUARDAR</button>
+  </div>
+
+  <div id="usuariosPortalList"></div>
+
+</div>
+
+<!-- MODAL SELECTOR DE OBJETIVOS -->
+<div class="picker-backdrop" id="pickerBackdrop" onclick="if(event.target===this) cerrarPicker()">
+  <div class="picker">
+    <div class="picker-head">
+      <div class="picker-title">ELEGIR OBJETIVOS</div>
+      <button class="picker-close" onclick="cerrarPicker()">✕</button>
+    </div>
+    <div class="picker-search">
+      <input type="text" id="pickerBuscar" placeholder="Buscar objetivo..." oninput="renderPickerLista()">
+    </div>
+    <div class="picker-lista" id="pickerLista"></div>
+    <div class="picker-foot">
+      <button class="btn btn-outline" onclick="cerrarPicker()">Cancelar</button>
+      <button class="btn btn-green" onclick="aplicarPicker()">APLICAR</button>
+    </div>
+  </div>
+</div>
+
+<datalist id="objetivosDatalist"></datalist>
+
+<script>
+// ─── BACKEND ──────────────────────────────────────────────────
+const APPS_SCRIPT_URL = 'PEGAR_LA_MISMA_URL_QUE_EN_INDEX_HTML';
+const SECRET_TOKEN = 'rock_4tK9wQ2mZx7vB5nR8pL';
+
+// ─── HELPERS ──────────────────────────────────────────────────
+function slugify(str) {
+  return str.trim().toUpperCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Z0-9]/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '');
+}
+
+
+// ─── DATALIST DE OBJETIVOS (se nutre de los dispositivos cargados) ──
+let objetivosConocidos = [];
+function actualizarObjetivosDatalist() {
+  const dl = document.getElementById('objetivosDatalist');
+  if (!dl) return;
+  dl.innerHTML = objetivosConocidos.map(o => `<option value="${o}">`).join('');
+}
+
+// ─── FLOTA DE DISPOSITIVOS ────────────────────────────────────
+function toggleAddDevice() {
+  const f = document.getElementById('addDeviceForm');
+  f.style.display = (f.style.display === 'none' || !f.style.display) ? 'flex' : 'none';
+}
+
+async function cargarDispositivos() {
+  const cont = document.getElementById('dispositivosList');
+  cont.innerHTML = `<div class="loading-msg">Cargando dispositivos...</div>`;
+  try {
+    const url = `${APPS_SCRIPT_URL}?action=listarDispositivos&token=${SECRET_TOKEN}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (!data.success) { cont.innerHTML = `<div class="empty"><div class="empty-text">Error al cargar la flota.</div></div>`; return; }
+    renderDispositivos(data.dispositivos || []);
+  } catch(e) {
+    cont.innerHTML = `<div class="empty"><div class="empty-text">No se pudo conectar con el backend.</div></div>`;
+  }
+}
+
+function esStale(s) {
+  if (!s) return false;
+  const m = s.match(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/);
+  if (!m) return false;
+  const dt = new Date(+m[3], +m[2]-1, +m[1], +m[4], +m[5]);
+  return (Date.now() - dt.getTime()) > 24 * 60 * 60 * 1000;
+}
+
+function renderDispositivos(lista) {
+  const cont = document.getElementById('dispositivosList');
+
+  // alimentar el datalist de objetivos con los que ya existen en la flota
+  objetivosConocidos = [...new Set(lista.map(d => (d.objetivo || '').toString().trim()).filter(Boolean))].sort();
+  actualizarObjetivosDatalist();
+
+  if (!lista.length) {
+    cont.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">📱</div>
+        <div class="empty-text">No hay dispositivos registrados todavía.<br>Se registran solos cuando configurás una tablet, o agregá uno manual arriba.</div>
+      </div>`;
+    return;
+  }
+
+  cont.innerHTML = lista.map((d, i) => {
+    const conex = d.ultimaConexion || 'nunca';
+    const stale = esStale(d.ultimaConexion);
+    const aliasEnc = encodeURIComponent(d.alias);
+
+    return `
+      <div class="device-card">
+        <div class="device-head">
+          <div class="device-main">
+            <div class="device-alias">📱 ${d.alias}</div>
+            <div class="device-assign">${d.objetivo || '—'} · Puesto ${d.puesto || '—'}</div>
+            <div class="device-conex ${stale ? 'stale' : ''}">Última conexión: ${conex}</div>
+          </div>
+          <div class="device-actions">
+            <button class="btn btn-outline" onclick="toggleEditor(${i})">Reasignar</button>
+            <button class="btn btn-delete" onclick="eliminarDispositivo('${aliasEnc}', this)">Eliminar</button>
+          </div>
+        </div>
+        <div class="device-editor" id="devEditor_${i}">
+          <div class="editor-row">
+            <div class="form-field">
+              <div class="form-label">Objetivo</div>
+              <input type="text" id="devObj_${i}" value="${d.objetivo || ''}" list="objetivosDatalist">
+            </div>
+            <div class="form-field">
+              <div class="form-label">Puesto</div>
+              <input type="text" id="devPst_${i}" value="${d.puesto || ''}">
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-green" onclick="guardarReasignacion(${i}, '${aliasEnc}', this)">GUARDAR</button>
+            <button class="btn btn-outline" onclick="toggleEditor(${i})">Cancelar</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleEditor(i) {
+  document.getElementById(`devEditor_${i}`).classList.toggle('open');
+}
+
+async function eliminarDispositivo(aliasEnc, btn) {
+  const alias = decodeURIComponent(aliasEnc);
+  const ok = confirm(
+    `¿Realmente deseás eliminar el dispositivo "${alias}"?\n\n` +
+    `La configuración se borrará de la tablet donde esté instalado la próxima vez que se conecte, ` +
+    `y habrá que ir a asistirla y configurarla nuevamente en el lugar.`
+  );
+  if (!ok) return;
+
+  const prev = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Eliminando...';
+  try {
+    const payload = { token: SECRET_TOKEN, action: 'eliminarDispositivo', alias };
+    const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await resp.json();
+    if (!data.success) { alert('Error al eliminar: ' + (data.error || '')); btn.disabled = false; btn.textContent = prev; return; }
+    await cargarDispositivos();
+  } catch(e) {
+    alert('No se pudo conectar con el backend');
+    btn.disabled = false; btn.textContent = prev;
+  }
+}
+
+function guardarReasignacion(i, aliasEnc, btn) {
+  const alias = decodeURIComponent(aliasEnc);
+  const obj = document.getElementById(`devObj_${i}`).value;
+  const pst = document.getElementById(`devPst_${i}`).value;
+  guardarDispositivoAdmin(alias, obj, pst, btn);
+}
+
+async function agregarDispositivo(btn) {
+  const alias = document.getElementById('newDevAlias').value;
+  const obj   = document.getElementById('newDevObj').value;
+  const pst   = document.getElementById('newDevPst').value;
+  const ok = await guardarDispositivoAdmin(alias, obj, pst, btn);
+  if (ok) {
+    document.getElementById('newDevAlias').value = '';
+    document.getElementById('newDevObj').value = '';
+    document.getElementById('newDevPst').value = '';
+    document.getElementById('addDeviceForm').style.display = 'none';
+  }
+}
+
+async function guardarDispositivoAdmin(alias, objetivoRaw, puestoRaw, btnEl) {
+  const aliasN   = (alias || '').trim().toUpperCase();
+  const objetivo = slugify(objetivoRaw || '');
+  const puesto   = slugify(puestoRaw || '');
+  if (!aliasN)   { alert('Falta el alias del dispositivo'); return false; }
+  if (!objetivo) { alert('Falta el objetivo'); return false; }
+  if (!puesto)   { alert('Falta el puesto'); return false; }
+
+  let prev;
+  if (btnEl) { prev = btnEl.textContent; btnEl.disabled = true; btnEl.textContent = 'Guardando...'; }
+  try {
+    const payload = { token: SECRET_TOKEN, action: 'guardarDispositivo', alias: aliasN, objetivo, puesto };
+    const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await resp.json();
+    if (!data.success) { alert('Error al guardar: ' + (data.error || '')); return false; }
+    await cargarDispositivos();
+    return true;
+  } catch(e) {
+    alert('No se pudo conectar con el backend');
+    return false;
+  } finally {
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = prev; }
+  }
+}
+
+// ─── SELECTOR DE OBJETIVOS (chips + modal con búsqueda) ───────
+// objetivosSel: contexto -> array de objetivos elegidos.
+// Contextos: 'nuevo' (alta) y 'user_N' (editor de cada usuario).
+let objetivosSel = { nuevo: [] };
+let pickerContexto = null;
+let pickerMarcados = [];
+
+function renderChips(contexto) {
+  const cont = document.getElementById('chips_' + contexto);
+  if (!cont) return;
+  const sel = objetivosSel[contexto] || [];
+  const chips = sel.map(o =>
+    `<span class="chip">${o}<button title="Quitar" onclick="quitarObjetivo('${contexto}','${encodeURIComponent(o)}')">✕</button></span>`
+  ).join('');
+  const vacio = sel.length ? '' : `<span class="chips-vacio">Sin objetivos asignados</span>`;
+  cont.innerHTML = chips + vacio +
+    `<button type="button" class="btn-add-obj" onclick="abrirPicker('${contexto}')">+ Agregar objetivo</button>`;
+}
+
+function quitarObjetivo(contexto, objEnc) {
+  const obj = decodeURIComponent(objEnc);
+  objetivosSel[contexto] = (objetivosSel[contexto] || []).filter(o => o !== obj);
+  renderChips(contexto);
+}
+
+function abrirPicker(contexto) {
+  pickerContexto = contexto;
+  pickerMarcados = [...(objetivosSel[contexto] || [])];
+  document.getElementById('pickerBuscar').value = '';
+  renderPickerLista();
+  document.getElementById('pickerBackdrop').classList.add('open');
+  setTimeout(() => document.getElementById('pickerBuscar').focus(), 50);
+}
+
+function cerrarPicker() {
+  document.getElementById('pickerBackdrop').classList.remove('open');
+  pickerContexto = null;
+}
+
+function renderPickerLista() {
+  const q = document.getElementById('pickerBuscar').value.trim().toUpperCase();
+  const lista = document.getElementById('pickerLista');
+  // Base: objetivos de la flota + los ya asignados a usuarios (por si alguno no tiene tablet hoy)
+  const base = [...new Set([...objetivosConocidos, ...pickerMarcados])].sort();
+  const filtrados = q ? base.filter(o => o.toUpperCase().includes(q)) : base;
+
+  if (!filtrados.length) {
+    lista.innerHTML = `<div class="picker-vacio">No se encontró ningún objetivo con "${q}".<br>Los objetivos salen de la flota de dispositivos.</div>`;
+    return;
+  }
+  lista.innerHTML = filtrados.map(o => {
+    const marcado = pickerMarcados.includes(o);
+    return `<div class="picker-item ${marcado ? 'marcado' : ''}" onclick="togglePickerItem('${encodeURIComponent(o)}')">
+      <span class="picker-check">${marcado ? '✓' : ''}</span>${o}
+    </div>`;
+  }).join('');
+}
+
+function togglePickerItem(objEnc) {
+  const obj = decodeURIComponent(objEnc);
+  if (pickerMarcados.includes(obj)) pickerMarcados = pickerMarcados.filter(o => o !== obj);
+  else pickerMarcados.push(obj);
+  renderPickerLista();
+}
+
+function aplicarPicker() {
+  if (pickerContexto) {
+    objetivosSel[pickerContexto] = [...pickerMarcados].sort();
+    renderChips(pickerContexto);
+  }
+  cerrarPicker();
+}
+
+// ─── USUARIOS DEL PORTAL DE CLIENTES ──────────────────────────
+let userEditActivo = {};
+
+function toggleAddUser() {
+  const f = document.getElementById('addUserForm');
+  const abrir = (f.style.display === 'none' || !f.style.display);
+  f.style.display = abrir ? 'flex' : 'none';
+  if (abrir) renderChips('nuevo');
+}
+
+async function cargarUsuariosPortal() {
+  const cont = document.getElementById('usuariosPortalList');
+  cont.innerHTML = `<div class="loading-msg">Cargando usuarios...</div>`;
+  try {
+    const payload = { token: SECRET_TOKEN, action: 'listarUsuariosPortal' };
+    const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await resp.json();
+    if (!data.success) { cont.innerHTML = `<div class="empty"><div class="empty-text">Error al cargar los usuarios.</div></div>`; return; }
+    renderUsuariosPortal(data.usuarios || []);
+  } catch(e) {
+    cont.innerHTML = `<div class="empty"><div class="empty-text">No se pudo conectar con el backend.</div></div>`;
+  }
+}
+
+function renderUsuariosPortal(lista) {
+  const cont = document.getElementById('usuariosPortalList');
+  userEditActivo = {};
+
+  if (!lista.length) {
+    cont.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">👤</div>
+        <div class="empty-text">No hay usuarios del portal todavía.<br>Agregá el primero con el botón de arriba.</div>
+      </div>`;
+    return;
+  }
+
+  cont.innerHTML = lista.map((u, i) => {
+    userEditActivo[i] = u.activo ? 'SI' : 'NO';
+    objetivosSel['user_' + i] = (u.objetivos || '').split(',').map(x => x.trim()).filter(Boolean);
+    const badge = u.activo
+      ? `<span class="badge-activo">Activo</span>`
+      : `<span class="badge-inactivo">Inactivo</span>`;
+    const userEnc = encodeURIComponent(u.usuario);
+    const objsEsc = (u.objetivos || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+    return `
+      <div class="device-card">
+        <div class="device-head">
+          <div class="device-main">
+            <div class="device-alias">👤 ${u.usuario}</div>
+            <div class="device-assign">Objetivos: ${objsEsc || '—'} ${badge}</div>
+          </div>
+          <div class="device-actions">
+            <button class="btn btn-outline" onclick="toggleUserEditor(${i})">Editar</button>
+            <button class="btn btn-delete" onclick="eliminarUsuarioPortal('${userEnc}', this)">Eliminar</button>
+          </div>
+        </div>
+        <div class="device-editor" id="userEditor_${i}">
+          <div class="editor-row">
+            <div class="form-field" style="flex:1.5;">
+              <div class="form-label">Objetivos permitidos</div>
+              <div class="chips-box" id="chips_user_${i}"></div>
+            </div>
+            <div class="form-field">
+              <div class="form-label">Nueva contraseña</div>
+              <input type="password" class="campo-pass" id="userPass_${i}" placeholder="Vacío = no cambiar" autocomplete="new-password">
+            </div>
+            <div class="form-field" style="flex:0 0 auto;">
+              <div class="form-label">Estado</div>
+              <div class="version-toggle">
+                <button id="userActSi_${i}" class="${userEditActivo[i]==='SI' ? 'active-basica' : ''}" onclick="setUserActivo(${i},'SI')">Activo</button>
+                <button id="userActNo_${i}" class="${userEditActivo[i]==='NO' ? 'active-extended' : ''}" onclick="setUserActivo(${i},'NO')">Inactivo</button>
+              </div>
+            </div>
+          </div>
+          <div class="hint">La contraseña nunca se muestra. Si el cliente la olvidó, escribí una nueva acá y se resetea.</div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-green" onclick="guardarEdicionUsuario(${i}, '${userEnc}', this)">GUARDAR</button>
+            <button class="btn btn-outline" onclick="toggleUserEditor(${i})">Cancelar</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+  lista.forEach((u, i) => renderChips('user_' + i));
+}
+
+function toggleUserEditor(i) {
+  document.getElementById(`userEditor_${i}`).classList.toggle('open');
+}
+
+function setUserActivo(i, v) {
+  userEditActivo[i] = v;
+  document.getElementById(`userActSi_${i}`).className = v === 'SI' ? 'active-basica'   : '';
+  document.getElementById(`userActNo_${i}`).className = v === 'NO' ? 'active-extended' : '';
+}
+
+async function guardarUsuarioPortalApi(payloadExtra, btnEl) {
+  let prev;
+  if (btnEl) { prev = btnEl.textContent; btnEl.disabled = true; btnEl.textContent = 'Guardando...'; }
+  try {
+    const payload = Object.assign({ token: SECRET_TOKEN, action: 'guardarUsuarioPortal' }, payloadExtra);
+    const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await resp.json();
+    if (!data.success) { alert('Error al guardar: ' + (data.error || '')); return false; }
+    await cargarUsuariosPortal();
+    return true;
+  } catch(e) {
+    alert('No se pudo conectar con el backend');
+    return false;
+  } finally {
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = prev; }
+  }
+}
+
+async function agregarUsuarioPortal(btn) {
+  const usuario = document.getElementById('newUserNombre').value.trim().toLowerCase();
+  const pass    = document.getElementById('newUserPass').value;
+  const objs    = (objetivosSel['nuevo'] || []).join(', ');
+  if (!usuario) { alert('Falta el nombre de usuario'); return; }
+  if (!pass || pass.length < 8) { alert('La contraseña debe tener al menos 8 caracteres'); return; }
+  if (!objs)    { alert('Asigná al menos un objetivo con el botón "+ Agregar objetivo"'); return; }
+
+  const ok = await guardarUsuarioPortalApi({ usuario, password: pass, objetivos: objs, activo: 'SI' }, btn);
+  if (ok) {
+    document.getElementById('newUserNombre').value = '';
+    document.getElementById('newUserPass').value = '';
+    objetivosSel['nuevo'] = [];
+    document.getElementById('addUserForm').style.display = 'none';
+  }
+}
+
+async function guardarEdicionUsuario(i, userEnc, btn) {
+  const usuario = decodeURIComponent(userEnc);
+  const objs = (objetivosSel['user_' + i] || []).join(', ');
+  const pass = document.getElementById(`userPass_${i}`).value;
+  if (!objs) { alert('Asigná al menos un objetivo con el botón "+ Agregar objetivo"'); return; }
+  if (pass && pass.length < 8) { alert('La nueva contraseña debe tener al menos 8 caracteres'); return; }
+  await guardarUsuarioPortalApi({ usuario, password: pass, objetivos: objs, activo: userEditActivo[i] || 'SI' }, btn);
+}
+
+async function eliminarUsuarioPortal(userEnc, btn) {
+  const usuario = decodeURIComponent(userEnc);
+  const ok = confirm(
+    `¿Eliminar el usuario del portal "${usuario}"?\n\n` +
+    `Dejará de poder ingresar al portal de inmediato. Esta acción no borra ningún registro de accesos.`
+  );
+  if (!ok) return;
+
+  const prev = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Eliminando...';
+  try {
+    const payload = { token: SECRET_TOKEN, action: 'eliminarUsuarioPortal', usuario };
+    const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await resp.json();
+    if (!data.success) { alert('Error al eliminar: ' + (data.error || '')); btn.disabled = false; btn.textContent = prev; return; }
+    await cargarUsuariosPortal();
+  } catch(e) {
+    alert('No se pudo conectar con el backend');
+    btn.disabled = false; btn.textContent = prev;
+  }
+}
+
+// ─── VIGILADORES ──────────────────────────────────────────────
+// El portal de clientes usa esta tabla para mostrar el nombre del
+// vigilador en lugar del CUIL pelado.
+
+function escAttr(s) {
+  return (s === null || s === undefined ? '' : s).toString()
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function toggleAddVigi() {
+  const f = document.getElementById('addVigiForm');
+  const abierto = !(f.style.display === 'none' || !f.style.display);
+  f.style.display = abierto ? 'none' : 'flex';
+  if (!abierto) document.getElementById('newVigiCuil').focus();
+}
+
+async function cargarVigiladores() {
+  const cont = document.getElementById('vigiladoresList');
+  cont.innerHTML = `<div class="loading-msg">Cargando vigiladores...</div>`;
+  try {
+    const payload = { token: SECRET_TOKEN, action: 'listarVigiladores' };
+    const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await resp.json();
+    if (!data.success) { cont.innerHTML = `<div class="empty"><div class="empty-text">Error al cargar los vigiladores.</div></div>`; return; }
+    renderVigiladores(data.vigiladores || []);
+  } catch(e) {
+    cont.innerHTML = `<div class="empty"><div class="empty-text">No se pudo conectar con el backend.</div></div>`;
+  }
+}
+
+function renderVigiladores(lista) {
+  const cont = document.getElementById('vigiladoresList');
+  if (!lista.length) {
+    cont.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">👤</div>
+        <div class="empty-text">No hay vigiladores cargados todavía.<br>Hasta que cargues el nombre acá, el portal muestra solo el CUIL.</div>
+      </div>`;
+    return;
+  }
+  cont.innerHTML = lista.map((v, i) => {
+    const cuilEnc = encodeURIComponent(v.cuil);
+    return `
+      <div class="device-card">
+        <div class="device-head">
+          <div class="device-main">
+            <div class="device-alias">👤 ${escAttr(v.nombre)}</div>
+            <div class="device-assign">CUIL ${escAttr(v.cuil)}</div>
+          </div>
+          <div class="device-actions">
+            <button class="btn btn-outline" onclick="toggleVigiEditor(${i})">Editar</button>
+            <button class="btn btn-delete" onclick="eliminarVigilador('${cuilEnc}', this)">Eliminar</button>
+          </div>
+        </div>
+        <div class="device-editor" id="vigiEditor_${i}">
+          <div class="editor-row">
+            <div class="form-field">
+              <div class="form-label">CUIL</div>
+              <input type="text" id="vigiCuil_${i}" value="${escAttr(v.cuil)}" inputmode="numeric">
+            </div>
+            <div class="form-field" style="flex:1.5;">
+              <div class="form-label">Apellido y nombre</div>
+              <input type="text" id="vigiNombre_${i}" value="${escAttr(v.nombre)}">
+            </div>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn btn-green" onclick="guardarEdicionVigilador(${i}, '${cuilEnc}', this)">GUARDAR</button>
+            <button class="btn btn-outline" onclick="toggleVigiEditor(${i})">Cancelar</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleVigiEditor(i) {
+  document.getElementById(`vigiEditor_${i}`).classList.toggle('open');
+}
+
+async function guardarVigiladorApi(payloadExtra, btnEl) {
+  let prev;
+  if (btnEl) { prev = btnEl.textContent; btnEl.disabled = true; btnEl.textContent = 'Guardando...'; }
+  try {
+    const payload = Object.assign({ token: SECRET_TOKEN, action: 'guardarVigilador' }, payloadExtra);
+    const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await resp.json();
+    if (!data.success) { alert('Error: ' + (data.error || '')); return false; }
+    await cargarVigiladores();
+    return true;
+  } catch(e) {
+    alert('No se pudo conectar con el backend');
+    return false;
+  } finally {
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = prev; }
+  }
+}
+
+// Al guardar deja el foco de nuevo en CUIL, para cargar varios seguidos
+// sin tocar el mouse: CUIL → Enter → nombre → Enter → siguiente.
+async function agregarVigilador(btn) {
+  const cuil   = document.getElementById('newVigiCuil').value;
+  const nombre = document.getElementById('newVigiNombre').value;
+  const ok = await guardarVigiladorApi({ cuil, nombre }, btn);
+  if (ok) {
+    document.getElementById('newVigiCuil').value = '';
+    document.getElementById('newVigiNombre').value = '';
+    document.getElementById('newVigiCuil').focus();
+  }
+}
+
+async function guardarEdicionVigilador(i, cuilEnc, btn) {
+  const cuilOriginal = decodeURIComponent(cuilEnc);
+  const cuil   = document.getElementById(`vigiCuil_${i}`).value;
+  const nombre = document.getElementById(`vigiNombre_${i}`).value;
+  await guardarVigiladorApi({ cuil, nombre, cuilOriginal }, btn);
+}
+
+async function eliminarVigilador(cuilEnc, btn) {
+  const cuil = decodeURIComponent(cuilEnc);
+  const ok = confirm(
+    `¿Eliminar al vigilador con CUIL ${cuil}?\n\n` +
+    `Los registros que ya hizo NO se borran: el portal simplemente vuelve a mostrar el CUIL sin nombre.`
+  );
+  if (!ok) return;
+  const prev = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Eliminando...';
+  try {
+    const payload = { token: SECRET_TOKEN, action: 'eliminarVigilador', cuil };
+    const resp = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await resp.json();
+    if (!data.success) { alert('Error al eliminar: ' + (data.error || '')); btn.disabled = false; btn.textContent = prev; return; }
+    await cargarVigiladores();
+  } catch(e) {
+    alert('No se pudo conectar con el backend');
+    btn.disabled = false; btn.textContent = prev;
+  }
+}
+
+// ─── LOGIN ────────────────────────────────────────────────────
+const PASSWORD = 'PONER_LA_MISMA_CLAVE_DEL_INDEX';
+
+function verificarPassword() {
+  const input = document.getElementById('passwordInput').value;
+  if (input === PASSWORD) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminContent').style.display = 'block';
+    cargarDispositivos();
+    cargarVigiladores();
+    cargarUsuariosPortal();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('passwordInput').value = '';
+  }
+}
+
+function cerrarAdmin() {
+  document.getElementById('adminContent').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+</script>
+</div> <!-- /adminContent -->
+</body>
+</html>
