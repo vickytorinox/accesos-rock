@@ -5,7 +5,7 @@
 // Apps Script: NUNCA se cachea
 // ══════════════════════════════════════════════════════════════════
 const CACHE  = 'accesos-rock-v1';
-const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
+const ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -42,7 +42,7 @@ self.addEventListener('fetch', (e) => {
           caches.open(CACHE).then((c) => c.put(req, copia));
           return resp;
         })
-        .catch(() => caches.match(req).then((r) => r || caches.match('/index.html')))
+        .catch(() => caches.match(req).then((r) => r || caches.match('./index.html')))
     );
   } else {
     // Cache-first: iconos, manifest, etc.
